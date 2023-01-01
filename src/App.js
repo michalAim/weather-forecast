@@ -9,7 +9,8 @@ function App() {
 
   const [query, setQuery] = useState({q: 'Tel aviv'});
   const [weather, setWeather] = useState(null);
-  const units = 'metric';
+  const [units ,setUnits] = useState('metric');
+  const [msg, setMsg] = useState('');
 
   //will fetch the data every time that Query is changing or unit
   useEffect(() => {
@@ -23,13 +24,13 @@ function App() {
   }, [query, units]);
 
   return (
-    <div className='mx-auto max-w-screen-md mt-4 py-5 px-32 
+    <div className='mx-auto max-w-screen-md mt-4 py-5 px-16 md:px-32 
     bg-gradient-to-br shadow-xl shadow-gray-400 from-yellow-700 to-cyan-700 rounded-xl'>
-      <SearchInput setQuery={setQuery}/>
-
+      <SearchInput setQuery={setQuery} setUnits={setUnits} units={units} />
+      
       {weather && (
         <>
-          <WeatherDetails weather={weather}/>
+          <WeatherDetails weather={weather} units={units}/>
           <FiveDaysForecast items={weather.list}/>
         </>
       )}

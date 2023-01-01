@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 const API_KEY = "cfc02e74b97d0e62ce33d1009d7fb1c1";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
-const getWeatherData = (infoType, searchParams) => {
+const getWeatherData = (infoType, searchParams, msg) => {
   const url = new URL(BASE_URL + "/" + infoType);
   url.search = new URLSearchParams({ ...searchParams, appid: API_KEY });
 
@@ -49,7 +49,8 @@ const formatCurrentWeather = (data) => {
 };
 
 const formatNextForecastWeather = (data) => {
-    let { timezone, list } = data;
+    let { city, list } = data;
+    let timezone = city.timezone;
     list = list.slice(0, 39).map((d, index, array) => {
         if((formatToLocalTime(d.dt, timezone, "ccc")) !== formatToLocalTime(array[0].dt, timezone, "ccc")){
             if((d.dt_txt.split(" ")[1] === '12:00:00') || index === array.length-1){
@@ -60,9 +61,10 @@ const formatNextForecastWeather = (data) => {
                };                
             }
         }
+        return 0;
     });
 
-    list = list.filter(item => item !== undefined);
+    list = list.filter(item => item !== 0);
 
     if (list.length === 4)
       list.pop();
@@ -74,8 +76,9 @@ const getFormattedWeatherData = async (searchParams) => {
   const formattedCurrentWeather = await getWeatherData(
     "weather",
     searchParams
-  ).then(formatCurrentWeather);
-
+  ).catch(err => console.log("err:",err)).then(formatCurrentWeather);
+  // formattedCurrentWeather = formatCurrentWeather(formattedCurrentWeather);
+  
   const { lat, lon } = formattedCurrentWeather;
 
   const formattedNextForecastWeather = await getWeatherData("forecast", {
