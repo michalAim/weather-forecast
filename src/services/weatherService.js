@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import _ from "lodash";
 
 const API_KEY = "cfc02e74b97d0e62ce33d1009d7fb1c1";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
@@ -53,24 +53,23 @@ const formatNextForecastWeather = (data) => {
     let { city, list } = data;
     let timezone = city.timezone;
 
-    list = list.slice(0, 39).map((d, index, array) => {
-      if((d.dt_txt.split(" ")[1] === '12:00:00') || index === array.length-1){
-        const day = currentDateFormat(timezone, d.dt);
-          return {
-          title: day,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-         };                
-      }
-        return 0;
-    });
+    let forecast = _.map(list, (d, index, array) => {
+        if((d.dt_txt.split(" ")[1] === '12:00:00') || index === array.length-1){
+          const day = currentDateFormat(timezone, d.dt);
+            return {
+            title: day,
+            temp: d.main.temp,
+            icon: d.weather[0].icon,
+           };                
+        }    
+       });
 
-    list = list.filter(item => item !== 0);
+    forecast=_.compact(forecast);
 
-    if (list.length === 4)
-      list.pop();
+    if (forecast.length === 4)
+      forecast=_.drop(forecast);
 
-    return {list};
+    return {forecast};
 };
 
 const getFormattedWeatherData = async (searchParams) => { 
@@ -91,16 +90,18 @@ const getFormattedWeatherData = async (searchParams) => {
   return { ...formattedCurrentWeather, ...formattedNextForecastWeather };
 };
 
-function currentDateFormat(timezoneIn, dtIn, showFullDate = false) {
+const currentDateFormat = (timezoneIn, dtIn, showFullDate = false) => {
   const dateTime = new Date(dtIn * 1000 + (timezoneIn * 1000));
 
   const hour = dateTime.getHours()-2;
-  const minutes = dateTime.getMinutes();
-  let date = dateTime.toDateString();
+  let minutes = dateTime.getMinutes();
+  if (minutes <= 9)
+    minutes = '0' + minutes; 
+  const date = dateTime.toDateString();
   const day = date.split(" ")[0];
-  
+
   return showFullDate? `${date}, ${hour}:${minutes}`:`${day}`;
-}
+};
 
 const iconUrlFromCode = (code) =>
   `http://openweathermap.org/img/wn/${code}@2x.png`;

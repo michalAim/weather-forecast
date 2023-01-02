@@ -33,7 +33,7 @@ function SearchInput({setQuery, setUnits, units}) {
           onChange={(e) => setCity(e.currentTarget.value)}
           type="text" 
           placeholder='Weather in your city...'
-          className='text-xl font-light p-4 w-full shadow-xl focus:outline-none rounded-xl' 
+          className='text-sm md:text-xl font-light p-4 w-full shadow-xl focus:outline-none rounded-xl' 
           onKeyDown={(e) => handleEnterClick(e)}
          />
          <UilSearch 

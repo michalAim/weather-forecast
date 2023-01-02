@@ -31,7 +31,7 @@ function App() {
       {weather && (
         <>
           <WeatherDetails weather={weather} units={units}/>
-          <FiveDaysForecast items={weather.list}/>
+          <FiveDaysForecast items={weather.forecast}/>
         </>
       )}
     </div>
