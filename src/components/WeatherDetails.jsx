@@ -1,12 +1,13 @@
 import React from 'react';
-import { formatToLocalTime, iconUrlFromCode } from '../services/weatherService';
+import { iconUrlFromCode } from '../services/weatherService';
 
-function WeatherDetails({weather: {dt, timezone, name, country, icon, temp, details}, units}) {
+function WeatherDetails({weather: {currentDate ,name, country, icon, temp, details}, units}) {
     const unitsDesc = units === 'metric'? '°' : 'F';
+
   return <div>
         <div className='flex items-center justify-center my-6'>
             <p className='text-white text-xl font-extralight'>
-              {formatToLocalTime(dt, timezone)}
+              {currentDate}
             </p>
         </div>
 

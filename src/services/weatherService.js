@@ -29,19 +29,20 @@ const formatCurrentWeather = (data) => {
     main: {temp},
     name,
     dt,
+    timezone,
     sys: {country},
     weather,
   } = data;
 
   const { main: details, icon } = weather[0];
-
+  const currentDate = currentDateFormat(timezone, dt, true);
   return {
     cod,
     lat,
     lon,
     temp,
     name,
-    dt,
+    currentDate,
     country,
     details,
     icon,
@@ -51,16 +52,16 @@ const formatCurrentWeather = (data) => {
 const formatNextForecastWeather = (data) => {
     let { city, list } = data;
     let timezone = city.timezone;
+
     list = list.slice(0, 39).map((d, index, array) => {
-        if((formatToLocalTime(d.dt, timezone, "ccc")) !== formatToLocalTime(array[0].dt, timezone, "ccc")){
-            if((d.dt_txt.split(" ")[1] === '12:00:00') || index === array.length-1){
-                return {
-                title: formatToLocalTime(d.dt, timezone, "ccc"),
-                temp: d.main.temp,
-                icon: d.weather[0].icon,
-               };                
-            }
-        }
+      if((d.dt_txt.split(" ")[1] === '12:00:00') || index === array.length-1){
+        const day = currentDateFormat(timezone, d.dt);
+          return {
+          title: day,
+          temp: d.main.temp,
+          icon: d.weather[0].icon,
+         };                
+      }
         return 0;
     });
 
@@ -69,7 +70,7 @@ const formatNextForecastWeather = (data) => {
     if (list.length === 4)
       list.pop();
 
-    return { timezone, list };
+    return {list};
 };
 
 const getFormattedWeatherData = async (searchParams) => { 
@@ -90,15 +91,20 @@ const getFormattedWeatherData = async (searchParams) => {
   return { ...formattedCurrentWeather, ...formattedNextForecastWeather };
 };
 
-const formatToLocalTime = (
-  secs,
-  zone,
-  format = "cccc, dd LLL yyyy'"
-) => DateTime.fromSeconds(secs).setZone(zone).toFormat(format);
+function currentDateFormat(timezoneIn, dtIn, showFullDate = false) {
+  const dateTime = new Date(dtIn * 1000 + (timezoneIn * 1000));
+
+  const hour = dateTime.getHours()-2;
+  const minutes = dateTime.getMinutes();
+  let date = dateTime.toDateString();
+  const day = date.split(" ")[0];
+  
+  return showFullDate? `${date}, ${hour}:${minutes}`:`${day}`;
+}
 
 const iconUrlFromCode = (code) =>
   `http://openweathermap.org/img/wn/${code}@2x.png`;
 
 export default getFormattedWeatherData;
 
-export { formatToLocalTime, iconUrlFromCode };
+export { iconUrlFromCode };
