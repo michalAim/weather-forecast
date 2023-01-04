@@ -7,7 +7,8 @@ const getWeatherData = (infoType, searchParams, msg) => {
   const url = new URL(BASE_URL + "/" + infoType);
   url.search = new URLSearchParams({ ...searchParams, appid: API_KEY });
 
-  return fetch(url).then((res) => {
+  return fetch(url)
+  .then((res) => {
     if (res.ok) {
       return res.json();
     } else {
@@ -76,7 +77,13 @@ const getFormattedWeatherData = async (searchParams) => {
   const formattedCurrentWeather = await getWeatherData(
     "weather",
     searchParams
-  ).catch(err => console.log("err:",err)).then(formatCurrentWeather);
+  )
+  .catch(err => 
+    {
+      if (err) 
+       throw err;
+    })
+  .then(formatCurrentWeather);
   // formattedCurrentWeather = formatCurrentWeather(formattedCurrentWeather);
   
   const { lat, lon } = formattedCurrentWeather;
@@ -92,8 +99,8 @@ const getFormattedWeatherData = async (searchParams) => {
 
 const currentDateFormat = (timezoneIn, dtIn, showFullDate = false) => {
   const dateTime = new Date(dtIn * 1000 + (timezoneIn * 1000));
-
-  const hour = dateTime.getHours()-2;
+  
+  const hour = (dateTime.getHours() === 0)? 22: dateTime.getHours()-2;
   let minutes = dateTime.getMinutes();
   if (minutes <= 9)
     minutes = '0' + minutes; 

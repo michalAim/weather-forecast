@@ -15,26 +15,44 @@ function App() {
   //will fetch the data every time that Query is changing or unit
   useEffect(() => {
     const fetchWeather = async () => {
-      await getFormattedWeatherData({...query, units}).then(data => {
+      await getFormattedWeatherData({...query, units})
+      // .catch(err => console.log('errorApp:', err))
+      .catch(err => {
+        setMsg(err);
+      })
+      .then(data => {
           setWeather(data);
       });
     };
   
+    setMsg('');
     fetchWeather();
   }, [query, units]);
 
+  const formatBackground = () => {
+    if (!weather) return 'from-cyan-700 to-blue-700';
+
+    const threshold = units === 'metric' ? 20 : 60;
+    if (weather.temp <= threshold) return 'from-cyan-700 to-blue-700'
+
+    return 'from-yellow-700 to-orange-700'
+  };
+
   return (
-    <div className='mx-auto max-w-screen-md mt-4 py-5 px-16 md:px-32 
-    bg-gradient-to-br shadow-xl shadow-gray-400 from-yellow-700 to-cyan-700 rounded-xl'>
-      <SearchInput setQuery={setQuery} setUnits={setUnits} units={units} />
-      
-      {weather && (
-        <>
-          <WeatherDetails weather={weather} units={units}/>
-          <FiveDaysForecast items={weather.forecast}/>
-        </>
-      )}
-    </div>
+    <>
+      <div className={`mx-auto max-w-screen-md mt-4 py-5 px-16 md:px-32 
+      bg-gradient-to-br shadow-xl shadow-gray-400 rounded-xl ${formatBackground()}`}>
+        <SearchInput setQuery={setQuery} setUnits={setUnits} units={units} />
+        {msg !== '' && <div className='flex justify-center text-white text-sm md:text-md '>You have to introduce a valid city name</div>}
+
+        {weather && (
+          <>
+            <WeatherDetails weather={weather} units={units}/>
+            <FiveDaysForecast items={weather.forecast}/>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 
