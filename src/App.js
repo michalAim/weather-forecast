@@ -1,5 +1,6 @@
 import './App.css';
 import SearchInput from './components/SearchInput';
+import CitySearchInput from './components/CitySearchInput';
 import WeatherDetails from './components/WeatherDetails';
 import FiveDaysForecast from './components/FiveDaysForecast';
 import getFormattedWeatherData from './services/weatherService';
@@ -42,7 +43,8 @@ function App() {
     <>
       <div className={`mx-auto max-w-screen-md mt-4 py-5 px-16 md:px-32 
       bg-gradient-to-br shadow-xl shadow-gray-400 rounded-xl ${formatBackground()}`}>
-        <SearchInput setQuery={setQuery} setUnits={setUnits} units={units} />
+        {/* <SearchInput setQuery={setQuery} setUnits={setUnits} units={units} /> */}
+        <CitySearchInput setQuery={setQuery} setUnits={setUnits} units={units} />
         {msg !== '' && <div className='flex justify-center text-white text-sm md:text-md '>You have to introduce a valid city name</div>}
 
         {weather && (
