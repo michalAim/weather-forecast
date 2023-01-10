@@ -69,7 +69,7 @@ const CitySearchInput = ({setQuery, setUnits, units}) => {
   return (
     <>
         <div className='flex flex-row justify-center my-6'>
-            <div className='flex flex-col w-full md:w-3/4 items-center justify-center'>
+            <div className='relative flex flex-col w-full md:w-3/4 items-center justify-center'>
                 <input 
                 value={inputValue}
                 onChange={(e) => {
@@ -82,11 +82,11 @@ const CitySearchInput = ({setQuery, setUnits, units}) => {
                 />
                 {
                     suggestions.length > 0 && (
-                        <div className='flex p-4 rounded-xl overflow-y-scroll max-h-44 w-full text-white text-sm border border-white'>
+                        <div className='autocomplete flex p-4 rounded-xl overflow-y-scroll max-h-44 absolute text-sm border bg-white'>
                             <ul className=''>
                                 {
                                 suggestions.map((suggestion) => (
-                                    <li className='transition ease-out hover:scale-105' key={suggestion} onClick={() => handleSuggestionClick(suggestion)}>
+                                    <li key={`${suggestion[0]}.${suggestion[1]}`} className='transition px-2 ease-out hover:scale-105 hover:bg-blue-500 hover:rounded-xl' key={suggestion} onClick={() => handleSuggestionClick(suggestion)}>
                                     {suggestion[0]+ ' ('+ suggestion[1]+ ')'}
                                     </li>
                                 ))

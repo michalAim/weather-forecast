@@ -100,7 +100,14 @@ const getFormattedWeatherData = async (searchParams) => {
 const currentDateFormat = (timezoneIn, dtIn, showFullDate = false) => {
   const dateTime = new Date(dtIn * 1000 + (timezoneIn * 1000));
 
-  const hour = (dateTime.getHours() === 0)? 22: dateTime.getHours()-2;
+  // const hour = (dateTime.getHours() === 0)? 22: dateTime.getHours()-2;
+  let hour = dateTime.getHours()-2;
+  if(hour === -2){
+    hour = 22;
+  } else if (hour === -1){
+    hour = 23;
+  }
+
   let minutes = dateTime.getMinutes();
   if (minutes <= 9)
     minutes = '0' + minutes; 
